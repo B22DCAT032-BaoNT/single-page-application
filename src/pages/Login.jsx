@@ -23,6 +23,16 @@ export default function Login({ onLogin }) {
             <input type="password" onChange={(e) => setCreds({
                 ...creds, password:
                     e.target.value
+            })} /><br />
+            <span>Name:</span><br />
+            <input type="text" onChange={(e) => setCreds({
+                ...creds, name:
+                    e.target.value
+            })} /><br />
+            <span>Email:</span><br />
+            <input type="text" onChange={(e) => setCreds({
+                ...creds, email:
+                    e.target.value
             })} /><br /><br />
             <button onClick={handleLogin}>Login</button> </div>
     );

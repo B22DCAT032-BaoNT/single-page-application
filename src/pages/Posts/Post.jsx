@@ -1,7 +1,12 @@
-import { useParams } from "react-router-dom";
+import { useParams, Navigate, useLocation } from "react-router-dom";
 import BlogPosts from "../../assets/BlogPosts.jsx";
 
-export default function Post() {
+export default function Post({ user }) {
+    const location = useLocation();
+    if (!user) {
+        return (<Navigate to="/login" state={{ from: location }} replace />);
+
+    }
     const { slug } = useParams();
     const post = BlogPosts[slug];
     if (!post) {

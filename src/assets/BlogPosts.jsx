@@ -14,6 +14,10 @@ const BlogPosts = {
     'fourth-blog-post': {
         title: 'Fourth Blog Post',
         description: 'Exploring more about routing in React.'
+    },
+    'fifth-blog-post': {
+        title: 'Fifth Blog Post',
+        description: 'Understanding nested routes and layouts.'
     }
 };
 export default BlogPosts;
