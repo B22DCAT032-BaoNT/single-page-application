@@ -10,7 +10,20 @@ app.use(cors());
 
 app.get("/api/posts", (req, res) => {
     console.log("Backend: Đã nhận yêu cầu GET /api/posts");
-    res.json(BlogPosts);
+    const { search } = req.query;
+
+    if (search) {
+        console.log(`Backend: Tìm kiếm bài viết với từ khóa: ${search}`);
+        const filteredPosts = BlogPosts.filter(post => {
+            const searchTerm = String(search).toLowerCase();
+            return post.title.toLowerCase().includes(searchTerm);
+        });
+        res.json(filteredPosts);
+    } else {
+        console.log("Backend: Không có từ khóa, trả về tất cả.");
+        res.json(BlogPosts);
+    }
+
 });
 
 app.get("/api/post/:slug", (req, res) => {
@@ -20,7 +33,6 @@ app.get("/api/post/:slug", (req, res) => {
     const post = BlogPosts.find((p) => p.slug === slug);
 
     if (post) {
-
         res.json(post);
     } else {
 

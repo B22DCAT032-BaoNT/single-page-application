@@ -5,21 +5,23 @@ export default function PostCount() {
     const [postCount, setPostCount] = useState(0);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        const fetchCount = async () => {
+        const fetchData = async () => {
             try {
-
-                const response = await fetch("http://localhost:8080/api/posts");
-                const data = await response.json();
-
-                setPostCount(data.length);
+                const response = await fetch('http://localhost:8080/api/posts');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const result = await response.json();
+                setPostCount(result.length);
             } catch (error) {
-                console.error("Lỗi khi đếm bài viết:", error);
+                console.error("Lỗi khi fetch data:", error);
             } finally {
                 setLoading(false);
-            }
-        };
 
-        fetchCount();
+
+            }
+        }
+        fetchData();
     }, []);
 
     if (loading) {

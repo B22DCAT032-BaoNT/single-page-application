@@ -11,6 +11,7 @@ import Stats from "../pages/Stats.jsx";
 import New from "../pages/New.jsx";
 import Countries from "../pages/Countries.jsx";
 import PostCount from "../pages/Posts/PostCount.jsx";
+import Profile from "../pages/Profile.jsx";
 export default function AppLayout() {
     const [user, setUser] = useState();
     const navigate = useNavigate();
@@ -38,8 +39,6 @@ export default function AppLayout() {
 
             </nav >
 
-
-
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/posts" element={<Posts />}>
@@ -50,7 +49,7 @@ export default function AppLayout() {
                 <Route path="/about" element={<About />} />
                 <Route path="/postcount" element={<PostCount />} />
                 <Route path="/countries" element={<Countries />} />
-
+                <Route path="/profile" element={<Profile user={user} />} />
                 <Route path="/login" element={<Login onLogin={setUser} />} />
                 <Route path="/stats" element={<Stats user={user} />} />
                 <Route path="*" element={<NoMatch />} />

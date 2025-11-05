@@ -5,10 +5,12 @@ export default function Login({ onLogin }) {
     const [creds, setCreds] = useState({});
     const navigate = useNavigate();
     function handleLogin() {
-        // For demonstration purposes only.
         if (creds?.username === 'admin' && creds?.password === '123') {
-            onLogin?.({ username: creds.username });
-            navigate('/stats');
+            onLogin?.({
+                username: creds.username,
+                name: creds.name,
+                email: creds.email
+            });
         }
     }
 
