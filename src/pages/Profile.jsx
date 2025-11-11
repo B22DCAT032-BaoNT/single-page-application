@@ -1,12 +1,13 @@
+import React from 'react';
 export default function Profile({ user }) {
+
     return (
         <div>
-            <h2>User Profile</h2>
-            <p>This is the profile page for the logged-in user.</p>
-            {user?.name || user?.email ? (
+            <h2>Thông tin người dùng</h2>
+            <p>Đây là trang thông tin cá nhân của người dùng đã đăng nhập.</p>
+            {user ? (
                 <div>
-                    <h3>Welcome, {user?.name}!</h3>
-                    <p>Email: {user?.email}</p>
+                    <p><strong>Username:</strong> {user.username}</p>
                 </div>
             ) : null}
         </div>

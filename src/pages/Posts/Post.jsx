@@ -33,8 +33,6 @@ export default function Post() {
                 setLoading(false);
             }
         };
-
-
         fetchData();
     }, [slug]);
 

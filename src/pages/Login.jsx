@@ -4,13 +4,24 @@ import { useNavigate } from "react-router-dom";
 export default function Login({ onLogin }) {
     const [creds, setCreds] = useState({});
     const navigate = useNavigate();
-    function handleLogin() {
-        if (creds?.username === 'admin' && creds?.password === '123') {
-            onLogin?.({
-                username: creds.username,
-                name: creds.name,
-                email: creds.email
+    const handleLogin = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/login", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(creds),
             });
+
+            if (response.ok) {
+                const user = await response.json();
+                onLogin(user);
+                navigate("/");
+            }
+        } catch (error) {
+            console.error("Lỗi khi đăng nhập:", error);
         }
     }
 
@@ -26,16 +37,6 @@ export default function Login({ onLogin }) {
                 ...creds, password:
                     e.target.value
             })} /><br />
-            <span>Name:</span><br />
-            <input type="text" onChange={(e) => setCreds({
-                ...creds, name:
-                    e.target.value
-            })} /><br />
-            <span>Email:</span><br />
-            <input type="text" onChange={(e) => setCreds({
-                ...creds, email:
-                    e.target.value
-            })} /><br /><br />
             <button onClick={handleLogin}>Login</button> </div>
     );
 }

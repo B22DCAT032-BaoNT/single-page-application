@@ -34,20 +34,5 @@ export const BlogPosts = [
         title: "Building a REST API",
         description: "Hướng dẫn từng bước để xây dựng một REST API với Express."
     },
-    {
-        slug: "deploying-node-app",
-        title: "Deploying a Node.js App",
-        description: "Các bước để triển khai ứng dụng Node.js lên Heroku."
-    },
-    {
-        slug: "fullstack-development",
-        title: "Fullstack Development",
-        description: "Khám phá phát triển fullstack với MERN."
-    },
-    {
-        slug: "javascript-es6-features",
-        title: "JavaScript ES6 Features",
-        description: "Tìm hiểu về các tính năng mới trong ES6."
-    },
 
 ];
