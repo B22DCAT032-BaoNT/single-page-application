@@ -2,37 +2,44 @@ export const BlogPosts = [
     {
         slug: "first-blog-post",
         title: "First Blog Post",
-        description: "Bài viết đầu tiên của tôi trên React Router v6!"
+        description: "Bài viết đầu tiên của tôi trên React Router v6!",
+        comments: []
     },
     {
         slug: "second-blog-post",
         title: "Second Blog Post",
-        description: "Hello React Router v6. Đây là bài viết thứ hai."
+        description: "Hello React Router v6. Đây là bài viết thứ hai.",
+        comments: []
     },
     {
         slug: "a-post-about-react",
         title: "A Post About React",
-        description: "React là một thư viện JavaScript tuyệt vời để xây dựng giao diện người dùng."
+        description: "React là một thư viện JavaScript tuyệt vời để xây dựng giao diện người dùng.",
+        comments: []
     },
     {
         slug: "learning-nodejs",
         title: "Learning Node.js",
-        description: "Node.js cho phép bạn chạy JavaScript ở phía server. Thật mạnh mẽ!"
+        description: "Node.js cho phép bạn chạy JavaScript ở phía server. Thật mạnh mẽ!",
+        comments: []
     },
     {
         slug: "exploring-express",
         title: "Exploring Express",
-        description: "Express là một framework web nhanh chóng, linh hoạt cho Node.js."
+        description: "Express là một framework web nhanh chóng, linh hoạt cho Node.js.",
+        comments: []
     },
     {
         slug: "understanding-cors",
         title: "Understanding CORS",
-        description: "CORS là một cơ chế bảo mật quan trọng trong phát triển web."
+        description: "CORS là một cơ chế bảo mật quan trọng trong phát triển web.",
+        comments: []
     },
     {
         slug: "building-rest-api",
         title: "Building a REST API",
-        description: "Hướng dẫn từng bước để xây dựng một REST API với Express."
+        description: "Hướng dẫn từng bước để xây dựng một REST API với Express.",
+        comments: []
     },
 
 ];

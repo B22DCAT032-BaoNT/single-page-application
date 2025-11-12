@@ -1,8 +1,8 @@
 export default function NoMatch() {
     return (
         <div>
-            <h2>404 - Not Found</h2>
-            <p>The page you are looking for does not exist.</p>
+            <h2>404 - Trang không tìm thấy</h2>
+            <p>Rất tiếc, trang bạn đang tìm kiếm không tồn tại.</p>
         </div>
     );
 }

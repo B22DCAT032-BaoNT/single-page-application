@@ -21,13 +21,14 @@ export default function AppLayout() {
             <nav style={{ margin: 10 }}>
                 <Link to="/" style={{ padding: 5 }}> Home </Link>
                 <Link to="/posts" style={{ padding: 5 }}> Posts </Link>
-                <Link to="/newpost" style={{ padding: 5 }}> New Post </Link>
                 <Link to="/about" style={{ padding: 5 }}> About </Link>
                 <Link to="/countries" style={{ padding: 5 }}> Countries </Link>
+
                 <span> | </span>
                 {user && <Link to="profile" style={{ padding: 5 }}> My profile</Link>}
                 {user && <Link to="/stats" style={{ padding: 5 }}> Stats </Link>}
                 {!user && <Link to="/login" style={{ padding: 5 }}> Login </Link>}
+                {user && <Link to="/newpost" style={{ padding: 5 }}> New Post </Link>}
                 {user && <button type="button" onClick={logOut} style={{
                     background: 'none', border: 'none', padding: 5, cursor: 'pointer', color: 'blue'
                 }}>
@@ -38,15 +39,14 @@ export default function AppLayout() {
 
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/countries" element={<Countries />} />
 
                 <Route path="/posts" element={<Posts />}>
                     <Route index element={<PostLists />} />
                     <Route path=":slug" element={<Post user={user} />} />
                 </Route>
 
-
-                <Route path="/about" element={<About />} />
-                <Route path="/countries" element={<Countries />} />
                 <Route path="/login" element={<Login onLogin={setUser} />} />
 
                 <Route path="/profile" element={<ProtectedRoute user={user}><Profile user={user} /></ProtectedRoute>} />

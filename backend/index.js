@@ -29,12 +29,43 @@ app.post("/api/posts", (req, res) => {
     const post = {
         slug: req.body.slug,
         title: req.body.title,
-        description: req.body.description
+        description: req.body.description,
+        comments: []
     }
     BlogPosts.push(post);
     res.status(200).json({ message: "Bài viết đã được thêm thành công" });
 
 });
+
+app.post("/api/post/:slug/comments", (req, res) => {
+    const { slug } = req.params;
+    const { text } = req.body;
+
+    const post = BlogPosts.find((p) => p.slug === slug);
+    if (post) {
+        const newComment = {
+            id: Date.now(),
+            text: text,
+            timestamp: new Date().toISOString()
+        };
+        post.comments.push(newComment);
+        res.status(200).json(newComment);
+    }
+    else {
+        res.status(404).json({ message: "Bài viết không tìm thấy" });
+    }
+});
+
+app.get("/api/post/:slug/comments", (req, res) => {
+    const { slug } = req.params;
+    const post = BlogPosts.find((p) => p.slug === slug);
+    if (post) {
+        res.json(post.comments);
+    }
+    else {
+        res.status(404).json({ message: "Bài viết không tìm thấy" });
+    }
+})
 app.get("/api/posts", (req, res) => {
     const { search } = req.query;
 

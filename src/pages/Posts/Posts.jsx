@@ -3,8 +3,7 @@ import { Outlet } from "react-router-dom";
 export default function Posts() {
     return (
         <div>
-            <h2>Blog Post Title</h2>
-            <p>This is the content of the blog post.</p>
+            <h2>Danh Sách Bài Viết</h2>
             <Outlet />
         </div>
     );
