@@ -19,11 +19,25 @@ app.post("/api/login", (req, res) => {
     );
 
     if (foundUser) {
-        res.status(200).json({ username: foundUser.username });
+        const userToSend = {
+            username: foundUser.username,
+            role: foundUser.role
+        };
+        res.status(200).json({ user: userToSend });
     } else {
         res.status(401).json({ message: "Đăng nhập thất bại" });
     }
 });
+
+app.post("/api/register", (req, res) => {
+    const creds = {
+        username: req.body.username,
+        password: req.body.password,
+        role: "user"
+    }
+    LoginCreds.push(creds);
+    res.status(201).json({ message: "Đăng ký thành công" });
+})
 
 app.post("/api/posts", (req, res) => {
     const post = {
@@ -34,7 +48,30 @@ app.post("/api/posts", (req, res) => {
     }
     BlogPosts.push(post);
     res.status(200).json({ message: "Bài viết đã được thêm thành công" });
+});
 
+app.delete("/api/post/:slug", (req, res) => {
+    const { slug } = req.params;
+    const postIndex = BlogPosts.findIndex((p) => p.slug === slug);
+    if (postIndex !== -1) {
+        BlogPosts.splice(postIndex, 1);
+        res.status(200).json({ message: "Bài viết đã được xóa thành công" });
+    } else {
+        res.status(404).json({ message: "Bài viết không tìm thấy" });
+    }
+});
+
+app.put("/api/post/:slug", (req, res) => {
+    const { slug } = req.params;
+    const { title, description } = req.body;
+    const post = BlogPosts.find((p) => p.slug === slug);
+    if (post) {
+        post.title = title;
+        post.description = description;
+        res.status(200).json(post);
+    } else {
+        res.status(404).json({ message: "Bài viết không tìm thấy" });
+    }
 });
 
 app.post("/api/post/:slug/comments", (req, res) => {

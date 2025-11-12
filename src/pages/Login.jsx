@@ -15,9 +15,10 @@ export default function Login({ onLogin }) {
                 body: JSON.stringify(creds),
             });
 
+
             if (response.ok) {
-                const user = await response.json();
-                onLogin(user);
+                const data = await response.json();
+                onLogin(data.user);
                 navigate("/");
             }
         } catch (error) {

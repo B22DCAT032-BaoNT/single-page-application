@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 export default function Post({ user }) {
     const { slug } = useParams();
 
@@ -9,6 +9,10 @@ export default function Post({ user }) {
     const [error, setError] = useState(null);
 
     const [newComment, setNewComment] = useState("");
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [editData, setEditData] = useState({ title: "", description: "" });
+    const navigate = useNavigate();
     useEffect(() => {
         if (!slug) return;
 
@@ -44,8 +48,8 @@ export default function Post({ user }) {
             if (!response.ok) {
                 throw new Error(`Không thể thêm bình luận`);
             }
-            const newCommentData = await response.json();
 
+            const newCommentData = await response.json();
             setPost(prevPost => ({
                 ...prevPost,
                 comments: [...prevPost.comments, newCommentData]
@@ -56,6 +60,53 @@ export default function Post({ user }) {
         }
     };
 
+    const handleRemovePost = async () => {
+        try {
+            await fetch(`http://localhost:8080/api/post/${slug}`, {
+                method: "DELETE"
+            });
+            navigate("/posts");
+        } catch (error) {
+            console.error("Error deleting post:", error);
+        }
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`http://localhost:8080/api/post/${slug}`, {
+                method: "PUT",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(editData)
+            });
+            if (!response.ok) {
+                throw new Error(`Không thể cập nhật bài viết`);
+            }
+
+            const newEditData = await response.json()
+
+            setPost(prevPost => ({
+                ...prevPost,
+                title: newEditData.title,
+                description: newEditData.description
+            }));
+            setIsEditing(false);
+        }
+        catch (error) {
+            console.error("Lỗi khi cập nhật bài viết:", error);
+        }
+    };
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+        setEditData({
+            title: post.title,
+            description: post.description
+        });
+    };
 
     if (loading) {
         return <div>Đang tải bài viết...</div>;
@@ -74,15 +125,38 @@ export default function Post({ user }) {
             <h3>{post.title}</h3>
             <p>{post.description}</p>
 
-            {user && <><h4>Bình luận</h4><form onSubmit={handleCommentSubmit}>
-                <textarea
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Thêm bình luận..."
-                    rows={2}
-                    cols={100} /><br />
-                <button type="submit">Gửi Bình Luận</button>
-            </form></>
+            {user && <button type="button" onClick={handleRemovePost}>Xóa Bài Viết</button>}
+            {user && !isEditing && <button type="button" onClick={handleEditClick}>Chỉnh Sửa Bài Viết</button>}
+            {isEditing && (
+                <form onSubmit={handleEditSubmit}>
+                    <div>
+                        <label>Tiêu đề:</label><br />
+                        <input
+                            type="text"
+                            value={editData.title}
+                            onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                        />
+                    </div>
+                    <div>
+                        <label>Mô tả:</label><br />
+                        <textarea
+                            value={editData.description}
+                            onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                        />
+                    </div>
+                    <button type="submit">Cập Nhật Bài Viết</button>
+                </form>
+            )}
+            {
+                user && <><h4>Bình luận</h4><form onSubmit={handleCommentSubmit}>
+                    <textarea
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Thêm bình luận..."
+                        rows={2}
+                        cols={100} /><br />
+                    <button type="submit">Gửi Bình Luận</button>
+                </form></>
             }
             <ul>
                 {post.comments && post.comments.length > 0 ? (
@@ -98,7 +172,7 @@ export default function Post({ user }) {
                     <li>Không có bình luận nào.</li>
                 )}
             </ul>
-        </div>
+        </div >
 
 
     );

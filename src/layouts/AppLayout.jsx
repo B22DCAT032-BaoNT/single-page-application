@@ -12,6 +12,9 @@ import NewPost from "../pages/NewPost.jsx";
 import Countries from "../pages/Countries.jsx";
 import Profile from "../pages/Profile.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
+import AdminPage from "../pages/AdminPage.jsx";
+import AdminProtectedRoute from "../components/AdminProtectedRoute.jsx";
+import Register from "../pages/Register.jsx";
 export default function AppLayout() {
     const [user, setUser] = useState();
     const navigate = useNavigate();
@@ -25,9 +28,11 @@ export default function AppLayout() {
                 <Link to="/countries" style={{ padding: 5 }}> Countries </Link>
 
                 <span> | </span>
+                {user?.role === "admin" && <Link to="/admin" style={{ padding: 5 }}> Admin Panel </Link>}
                 {user && <Link to="profile" style={{ padding: 5 }}> My profile</Link>}
                 {user && <Link to="/stats" style={{ padding: 5 }}> Stats </Link>}
                 {!user && <Link to="/login" style={{ padding: 5 }}> Login </Link>}
+                {!user && <Link to="/register" style={{ padding: 5 }}> Register </Link>}
                 {user && <Link to="/newpost" style={{ padding: 5 }}> New Post </Link>}
                 {user && <button type="button" onClick={logOut} style={{
                     background: 'none', border: 'none', padding: 5, cursor: 'pointer', color: 'blue'
@@ -48,11 +53,18 @@ export default function AppLayout() {
                 </Route>
 
                 <Route path="/login" element={<Login onLogin={setUser} />} />
+                <Route path="/register" element={<Register />} />
 
                 <Route path="/profile" element={<ProtectedRoute user={user}><Profile user={user} /></ProtectedRoute>} />
                 <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />
                 <Route path="/newpost" element={<ProtectedRoute user={user}><NewPost /></ProtectedRoute>} />
                 <Route path="*" element={<NoMatch />} />
+
+                <Route path="/admin" element={
+                    <AdminProtectedRoute user={user}>
+                        <AdminPage />
+                    </AdminProtectedRoute>
+                } />
             </Routes>
         </>
     );
