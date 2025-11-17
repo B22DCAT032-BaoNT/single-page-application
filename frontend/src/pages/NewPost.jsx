@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-
+import React from "react";
 export default function NewPost() {
 
     const [newPost, setNewPost] = useState("");
@@ -29,9 +29,6 @@ export default function NewPost() {
         <form onSubmit={handleSubmit(onSubmit)}>
             <div style={{ padding: 10 }}><br />
                 <h2>Thêm Bài Viết Mới</h2>
-                <span>Slug:</span><br />
-                <input type="text" {...register("slug", { required: true })} /><br />
-                {errors.slug && <span style={{ color: 'red' }}>Yêu cầu nhập slug!</span>}<br />
 
                 <span>Title:</span><br />
                 <input type="text" {...register("title", { required: true })} /><br />

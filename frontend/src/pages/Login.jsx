@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 export default function Login({ onLogin }) {
     const [creds, setCreds] = useState({});
     const navigate = useNavigate();
     const handleLogin = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/login", {
+            const response = await fetch("http://localhost:8080/api/auth/login", {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',

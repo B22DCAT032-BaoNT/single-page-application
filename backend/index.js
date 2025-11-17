@@ -50,18 +50,18 @@ app.post("/api/posts", (req, res) => {
     res.status(200).json({ message: "Bài viết đã được thêm thành công" });
 });
 
-app.delete("/api/post/:slug", (req, res) => {
+app.delete("/api/posts/:slug", (req, res) => {
     const { slug } = req.params;
     const postIndex = BlogPosts.findIndex((p) => p.slug === slug);
-    if (postIndex !== -1) {
+    if (postIndex === -1) {
+        res.status(404).json({ message: "Bài viết không tìm thấy" });
+    } else {
         BlogPosts.splice(postIndex, 1);
         res.status(200).json({ message: "Bài viết đã được xóa thành công" });
-    } else {
-        res.status(404).json({ message: "Bài viết không tìm thấy" });
     }
 });
 
-app.put("/api/post/:slug", (req, res) => {
+app.put("/api/posts/:slug", (req, res) => {
     const { slug } = req.params;
     const { title, description } = req.body;
     const post = BlogPosts.find((p) => p.slug === slug);
@@ -74,7 +74,7 @@ app.put("/api/post/:slug", (req, res) => {
     }
 });
 
-app.post("/api/post/:slug/comments", (req, res) => {
+app.post("/api/posts/:slug/comments", (req, res) => {
     const { slug } = req.params;
     const { text } = req.body;
 
@@ -93,7 +93,7 @@ app.post("/api/post/:slug/comments", (req, res) => {
     }
 });
 
-app.get("/api/post/:slug/comments", (req, res) => {
+app.get("/api/posts/:slug/comments", (req, res) => {
     const { slug } = req.params;
     const post = BlogPosts.find((p) => p.slug === slug);
     if (post) {
@@ -118,7 +118,7 @@ app.get("/api/posts", (req, res) => {
 
 });
 
-app.get("/api/post/:slug", (req, res) => {
+app.get("/api/posts/:slug", (req, res) => {
     const { slug } = req.params;
     const post = BlogPosts.find((p) => p.slug === slug);
 

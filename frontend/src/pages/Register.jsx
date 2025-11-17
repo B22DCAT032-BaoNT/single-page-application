@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 export default function Register() {
     const { register, handleSubmit } = useForm();
     const navigate = useNavigate();
@@ -7,7 +8,7 @@ export default function Register() {
     const onSubmit = async (data) => {
         const creds = JSON.stringify(data);
         try {
-            const response = await fetch("http://localhost:8080/api/register", {
+            const response = await fetch("http://localhost:8080/api/auth/register", {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -29,9 +30,14 @@ export default function Register() {
         <form onSubmit={handleSubmit(onSubmit)}>
             <div style={{ padding: 10 }}><br />
                 <h2>Đăng Ký Tài Khoản Mới</h2>
-                <span>Username:</span><br />
+
+                <span>Gmail:</span><br />
+                <input type="email" {...register("gmail", { required: true })} /><br /><br />
+
+                <span>Tên người dùng:</span><br />
                 <input type="text" {...register("username", { required: true })} /><br /><br />
-                <span>Password:</span><br />
+
+                <span>Mật khẩu:</span><br />
                 <input type="password" {...register("password", { required: true })} /><br /><br />
                 <button type="submit">Đăng Ký</button>
             </div>

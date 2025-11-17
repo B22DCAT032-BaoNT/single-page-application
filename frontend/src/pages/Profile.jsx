@@ -7,7 +7,8 @@ export default function Profile({ user }) {
             <p>Đây là trang thông tin cá nhân của người dùng đã đăng nhập.</p>
             {user ? (
                 <div>
-                    <p><strong>Username:</strong> {user.username}</p>
+                    <p><strong>Tên người dùng:</strong> {user.username}</p>
+                    <p><strong>Gmail:</strong> {user.gmail}</p>
                 </div>
             ) : null}
         </div>

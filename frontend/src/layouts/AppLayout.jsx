@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import React from "react";
 import Home from "../pages/Home.jsx";
 import About from "../pages/About.jsx";
 import NoMatch from "../pages/NoMatch.jsx";
@@ -29,10 +30,10 @@ export default function AppLayout() {
 
                 <span> | </span>
                 {user?.role === "admin" && <Link to="/admin" style={{ padding: 5 }}> Admin Panel </Link>}
-                {user && <Link to="profile" style={{ padding: 5 }}> My profile</Link>}
+                {user && <Link to="/profile" style={{ padding: 5 }}> My profile</Link>}
                 {user && <Link to="/stats" style={{ padding: 5 }}> Stats </Link>}
-                {!user && <Link to="/login" style={{ padding: 5 }}> Login </Link>}
-                {!user && <Link to="/register" style={{ padding: 5 }}> Register </Link>}
+                {!user && <Link to="/auth/login" style={{ padding: 5 }}> Login </Link>}
+                {!user && <Link to="/auth/register" style={{ padding: 5 }}> Register </Link>}
                 {user && <Link to="/newpost" style={{ padding: 5 }}> New Post </Link>}
                 {user && <button type="button" onClick={logOut} style={{
                     background: 'none', border: 'none', padding: 5, cursor: 'pointer', color: 'blue'
@@ -52,8 +53,8 @@ export default function AppLayout() {
                     <Route path=":slug" element={<Post user={user} />} />
                 </Route>
 
-                <Route path="/login" element={<Login onLogin={setUser} />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/auth/login" element={<Login onLogin={setUser} />} />
+                <Route path="/auth/register" element={<Register />} />
 
                 <Route path="/profile" element={<ProtectedRoute user={user}><Profile user={user} /></ProtectedRoute>} />
                 <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />

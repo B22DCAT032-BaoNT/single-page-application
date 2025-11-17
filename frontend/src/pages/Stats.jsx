@@ -9,7 +9,7 @@ export default function Stats() {
             try {
                 const response = await fetch('http://localhost:8080/api/posts');
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    throw new Error(`Lỗi HTTP: ${response.status}`);
                 }
                 const result = await response.json();
                 setPostCount(result.length);

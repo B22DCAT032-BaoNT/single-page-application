@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import React from "react";
 export default function Countries() {
     const [countries, setCountries] = useState([]);
     const [loading, setLoading] = useState(true);
