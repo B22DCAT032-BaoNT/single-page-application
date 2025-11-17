@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import React from "react";
-import Home from "../pages/Home.jsx";
-import About from "../pages/About.jsx";
-import NoMatch from "../pages/NoMatch.jsx";
-import Posts from "../pages/Posts/Posts.jsx";
-import PostLists from "../pages/Posts/PostLists.jsx";
-import Post from "../pages/Posts/Post.jsx";
-import Login from "../pages/Login.jsx";
-import Stats from "../pages/Stats.jsx";
-import NewPost from "../pages/NewPost.jsx";
-import Countries from "../pages/Countries.jsx";
-import Profile from "../pages/Profile.jsx";
-import ProtectedRoute from "../components/ProtectedRoute.jsx";
-import AdminPage from "../pages/AdminPage.jsx";
-import AdminProtectedRoute from "../components/AdminProtectedRoute.jsx";
-import Register from "../pages/Register.jsx";
+import Home from "../pages/public/Home.jsx";
+import About from "../pages/public/About.jsx";
+import NoMatch from "../pages/public/NoMatch.jsx";
+import Posts from "../pages/posts/Posts.jsx";
+import PostLists from "../pages/posts/PostLists.jsx";
+import Post from "../pages/posts/Post.jsx";
+import Login from "../pages/public/Login.jsx";
+import Stats from "../pages/protected/Stats.jsx";
+import NewPost from "../pages/protected/NewPost.jsx";
+import Countries from "../pages/public/Countries.jsx";
+import Profile from "../pages/protected/Profile.jsx";
+import ProtectedRoute from "../components/routes/ProtectedRoute.jsx";
+import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
+import AdminUsers from "../pages/admin/AdminUsers.jsx";
+import AdminProtectedRoute from "../components/routes/AdminProtectedRoute.jsx";
+import Register from "../pages/public/Register.jsx";
 export default function AppLayout() {
     const [user, setUser] = useState();
     const navigate = useNavigate();
@@ -29,7 +30,11 @@ export default function AppLayout() {
                 <Link to="/countries" style={{ padding: 5 }}> Countries </Link>
 
                 <span> | </span>
-                {user?.role === "admin" && <Link to="/admin" style={{ padding: 5 }}> Admin Panel </Link>}
+                {user?.role === "admin" && (
+                    <>
+                        <Link to="/admin" style={{ padding: 5 }}>Admin Panel</Link>
+                    </>
+                )}
                 {user && <Link to="/profile" style={{ padding: 5 }}> My profile</Link>}
                 {user && <Link to="/stats" style={{ padding: 5 }}> Stats </Link>}
                 {!user && <Link to="/auth/login" style={{ padding: 5 }}> Login </Link>}
@@ -61,11 +66,16 @@ export default function AppLayout() {
                 <Route path="/newpost" element={<ProtectedRoute user={user}><NewPost /></ProtectedRoute>} />
                 <Route path="*" element={<NoMatch />} />
 
-                <Route path="/admin" element={
-                    <AdminProtectedRoute user={user}>
-                        <AdminPage />
-                    </AdminProtectedRoute>
-                } />
+                <Route path="/admin"
+                    element={
+                        <AdminProtectedRoute user={user}>
+                            <AdminDashboard />
+                        </AdminProtectedRoute>
+                    }
+                >
+                    <Route path="users" element={<AdminUsers />} />
+                </Route>
+
             </Routes>
         </>
     );

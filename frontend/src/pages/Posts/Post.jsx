@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+import PostForm from "../posts/PostForm.jsx";
 export default function Post({ user }) {
     const { slug } = useParams();
 
@@ -71,31 +71,30 @@ export default function Post({ user }) {
         }
     };
 
-    const handleEditSubmit = async (e) => {
-        e.preventDefault();
+    const handleEditSubmit = async (data) => {
         try {
             const response = await fetch(`http://localhost:8080/api/posts/${slug}`, {
                 method: "PUT",
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(editData)
+                body: JSON.stringify(data),
             });
+
             if (!response.ok) {
-                throw new Error(`Không thể cập nhật bài viết`);
+                throw new Error("Không thể cập nhật bài viết");
             }
 
-            const newEditData = await response.json()
+            const updated = await response.json();
 
-            setPost(prevPost => ({
+            setPost((prevPost) => ({
                 ...prevPost,
-                title: newEditData.title,
-                description: newEditData.description
+                title: updated.title,
+                description: updated.description,
             }));
             setIsEditing(false);
-        }
-        catch (error) {
+        } catch (error) {
             console.error("Lỗi khi cập nhật bài viết:", error);
         }
     };
@@ -130,26 +129,14 @@ export default function Post({ user }) {
             {user && <button type="button" onClick={handleRemovePost}>Xóa Bài Viết</button>}
             {user && !isEditing && <button type="button" onClick={handleEditClick}>Chỉnh Sửa Bài Viết</button>}
             {isEditing && (
-                <form onSubmit={handleEditSubmit}>
-                    <div>
-                        <label htmlFor="title">Tiêu đề:</label><br />
-                        <input
-                            id="title"
-                            type="text"
-                            value={editData.title}
-                            onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                        />
-                        <div>
-                            <label htmlFor="description">Mô tả:</label><br />
-                            <textarea
-                                id="description"
-                                value={editData.description}
-                                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                            />
-                        </div>
-                    </div>
-                    <button type="submit">Cập Nhật Bài Viết</button>
-                </form>
+                <PostForm
+                    initialValues={{
+                        title: post.title,
+                        description: post.description,
+                    }}
+                    onSubmit={handleEditSubmit}
+                    submitLabel="Cập Nhật Bài Viết"
+                />
             )}
             {
                 user && <><h4>Bình luận</h4><form onSubmit={handleCommentSubmit}>

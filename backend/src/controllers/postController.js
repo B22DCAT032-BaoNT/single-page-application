@@ -7,7 +7,6 @@ export const getPosts = async (req, res) => {
 
         const filter = {};
         if (search) {
-            // tìm theo title (case-insensitive)
             filter.title = { $regex: String(search), $options: "i" };
         }
 
