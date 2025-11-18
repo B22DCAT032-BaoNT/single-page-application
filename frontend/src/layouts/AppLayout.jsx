@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import React from "react";
 import Home from "../pages/public/Home.jsx";
 import About from "../pages/public/About.jsx";
 import NoMatch from "../pages/public/NoMatch.jsx";
-import Posts from "../pages/posts/Posts.jsx";
-import PostLists from "../pages/posts/PostLists.jsx";
-import Post from "../pages/posts/Post.jsx";
+import Posts from "../pages/Posts/Posts.jsx";
+import PostLists from "../pages/Posts/PostLists.jsx";
+import Post from "../pages/Posts/Post.jsx";
 import Login from "../pages/public/Login.jsx";
-import Stats from "../pages/protected/Stats.jsx";
-import NewPost from "../pages/protected/NewPost.jsx";
+import Stats from "../pages/public/Stats.jsx";
+
 import Countries from "../pages/public/Countries.jsx";
 import Profile from "../pages/protected/Profile.jsx";
 import ProtectedRoute from "../components/routes/ProtectedRoute.jsx";
@@ -20,7 +19,11 @@ import Register from "../pages/public/Register.jsx";
 export default function AppLayout() {
     const [user, setUser] = useState();
     const navigate = useNavigate();
-    function logOut() { setUser(null); navigate("/"); }
+    function logOut() {
+        localStorage.removeItem("accessToken");
+        setUser(null);
+        navigate("/");
+    }
     return (
         <>
             <nav style={{ margin: 10 }}>
@@ -31,15 +34,12 @@ export default function AppLayout() {
 
                 <span> | </span>
                 {user?.role === "admin" && (
-                    <>
-                        <Link to="/admin" style={{ padding: 5 }}>Admin Panel</Link>
-                    </>
+                    <Link to="/admin" style={{ padding: 5 }}>Admin Panel</Link>
                 )}
                 {user && <Link to="/profile" style={{ padding: 5 }}> My profile</Link>}
                 {user && <Link to="/stats" style={{ padding: 5 }}> Stats </Link>}
                 {!user && <Link to="/auth/login" style={{ padding: 5 }}> Login </Link>}
                 {!user && <Link to="/auth/register" style={{ padding: 5 }}> Register </Link>}
-                {user && <Link to="/newpost" style={{ padding: 5 }}> New Post </Link>}
                 {user && <button type="button" onClick={logOut} style={{
                     background: 'none', border: 'none', padding: 5, cursor: 'pointer', color: 'blue'
                 }}>
@@ -63,7 +63,6 @@ export default function AppLayout() {
 
                 <Route path="/profile" element={<ProtectedRoute user={user}><Profile user={user} /></ProtectedRoute>} />
                 <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />
-                <Route path="/newpost" element={<ProtectedRoute user={user}><NewPost /></ProtectedRoute>} />
                 <Route path="*" element={<NoMatch />} />
 
                 <Route path="/admin"

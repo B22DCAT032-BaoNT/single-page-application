@@ -1,4 +1,3 @@
-import React from "react";
 import { useEffect, useState } from "react";
 
 const API_BASE = "http://localhost:8080/api/admin/users";
@@ -17,11 +16,19 @@ export default function AdminUsers() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch(API_BASE)
+                const token = localStorage.getItem("accessToken");
+                const response = await fetch(API_BASE, {
+                    method: "GET",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                 const data = await response.json()
                 setUsers(data);
             } catch (error) {
-                console.error("Failed to fetch users:", error);
+                console.error("Lấy danh sách người dùng thất bại", error);
             }
         }
         fetchUsers();
@@ -57,7 +64,12 @@ export default function AdminUsers() {
 
         try {
             const response = await fetch(`${API_BASE}/${userId}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
+                }
             });
             if (!response.ok) {
                 throw new Error("Xóa người dùng thất bại");
@@ -85,7 +97,8 @@ export default function AdminUsers() {
                 method,
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
                 },
                 body: JSON.stringify(payload)
             });

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
-
+import jwt from "jsonwebtoken";
 // POST /api/register
 export const registerUser = async (req, res) => {
     try {
@@ -53,21 +53,35 @@ export const loginUser = async (req, res) => {
         const user = await User.findOne({ username });
 
         if (!user) {
-            return res.status(401).json({ message: "Sai username hoặc password" });
+            return res.status(401).json({ message: "Sai thông tin đăng nhập" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ message: "Sai username hoặc password" });
+            return res.status(401).json({ message: "Sai thông tin đăng nhập" });
         }
 
-        const userToSend = {
-            username: user.username,
-            gmail: user.gmail,
-            role: user.role,
-        };
+        const token = jwt.sign(
+            {
+                id: user._id,
+                username: user.username,
+                role: user.role,
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1d"
+            }
+        );
 
-        res.status(200).json({ user: userToSend });
+        res.status(200).json({
+            message: "Đăng nhập thành công",
+            token,
+            user: {
+                username: user.username,
+                gmail: user.gmail,
+                role: user.role,
+            },
+        });
     } catch (error) {
         console.error("Lỗi loginUser:", error);
         res.status(500).json({ message: "Lỗi server khi đăng nhập" });

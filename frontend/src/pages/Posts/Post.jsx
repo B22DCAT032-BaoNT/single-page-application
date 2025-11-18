@@ -1,31 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import PostForm from "../posts/PostForm.jsx";
+import { useParams } from "react-router-dom";
+
 export default function Post({ user }) {
     const { slug } = useParams();
-
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [newComment, setNewComment] = useState("");
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [editData, setEditData] = useState({ title: "", description: "" });
-    const navigate = useNavigate();
     useEffect(() => {
         if (!slug) return;
-
         const fetchData = async () => {
             setLoading(true);
-            setError(null);
             try {
                 const response = await fetch(`http://localhost:8080/api/posts/${slug}`);
-
+                if (!response.ok) throw new Error("Không thể tải bài viết");
                 const result = await response.json();
                 setPost(result);
             } catch (error) {
-                console.error("Lỗi khi fetch data:", error);
                 setError(error.message);
             } finally {
                 setLoading(false);
@@ -36,135 +28,74 @@ export default function Post({ user }) {
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
+        if (!newComment.trim()) return;
         try {
+            const token = localStorage.getItem("accessToken");
             const response = await fetch(`http://localhost:8080/api/posts/${slug}/comments`, {
                 method: "POST",
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ text: newComment })
             });
-            if (!response.ok) {
-                throw new Error(`Không thể thêm bình luận`);
+
+            if (response.ok) {
+                const newCommentData = await response.json();
+                setPost(prev => ({ ...prev, comments: [...prev.comments, newCommentData] }));
+                setNewComment("");
             }
-
-            const newCommentData = await response.json();
-            setPost(prevPost => ({
-                ...prevPost,
-                comments: [...prevPost.comments, newCommentData]
-            }));
-            setNewComment("");
         } catch (error) {
-            console.error("Lỗi khi thêm bình luận:", error);
+            console.error("Lỗi comment:", error);
         }
     };
 
-    const handleRemovePost = async () => {
-        try {
-            await fetch(`http://localhost:8080/api/posts/${slug}`, {
-                method: "DELETE"
-            });
-            navigate("/posts");
-        } catch (error) {
-            console.error("Error deleting post:", error);
-        }
-    };
-
-    const handleEditSubmit = async (data) => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/posts/${slug}`, {
-                method: "PUT",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (!response.ok) {
-                throw new Error("Không thể cập nhật bài viết");
-            }
-
-            const updated = await response.json();
-
-            setPost((prevPost) => ({
-                ...prevPost,
-                title: updated.title,
-                description: updated.description,
-            }));
-            setIsEditing(false);
-        } catch (error) {
-            console.error("Lỗi khi cập nhật bài viết:", error);
-        }
-    };
-
-    const handleEditClick = () => {
-        setIsEditing(true);
-        setEditData({
-            title: post.title,
-            description: post.description
-        });
-    };
-
-    if (loading) {
-        return <div>Đang tải bài viết...</div>;
-    }
-
-    if (error) {
-        return <div style={{ padding: 20 }}><h2>Lỗi: {error}</h2></div>;
-    }
-
-    if (!post) {
-        return <div style={{ padding: 20 }}>Không tìm thấy bài viết.</div>;
-    }
+    if (loading) return <div>Đang tải...</div>;
+    if (error || !post) return <div>Lỗi: {error}</div>;
 
     return (
-        <div style={{ padding: 20 }}>
-            <h3>{post.title}</h3>
-            <p style={{ whiteSpace: "pre-wrap" }}>
+        <div style={{ padding: 20, maxWidth: '800px', margin: '0 auto' }}>
+            <h1 >{post.title}</h1>
+
+            <div style={{ fontSize: '0.9rem', marginBottom: 20, borderBottom: '1px solid #eee', paddingBottom: 10 }}>
+                <span><strong>Tác giả:</strong> {post.author || "Ẩn danh"}</span>
+                <span style={{ marginLeft: 10 }}>| <strong>Ngày đăng:</strong> {new Date(post.createdAt).toLocaleString()}</span>
+                {post.updatedAt !== post.createdAt && (
+                    <span style={{ marginLeft: 10 }}>| <strong>Đã sửa:</strong> {new Date(post.updatedAt).toLocaleString()}</span>
+                )}
+            </div>
+
+            <p style={{ whiteSpace: "pre-wrap", lineHeight: 1.6, fontSize: '1.1rem' }}>
                 {post.description}
             </p>
 
-            {user && <button type="button" onClick={handleRemovePost}>Xóa Bài Viết</button>}
-            {user && !isEditing && <button type="button" onClick={handleEditClick}>Chỉnh Sửa Bài Viết</button>}
-            {isEditing && (
-                <PostForm
-                    initialValues={{
-                        title: post.title,
-                        description: post.description,
-                    }}
-                    onSubmit={handleEditSubmit}
-                    submitLabel="Cập Nhật Bài Viết"
-                />
-            )}
-            {
-                user && <><h4>Bình luận</h4><form onSubmit={handleCommentSubmit}>
+            <hr style={{ margin: '30px 0' }} />
+
+            <h3>Bình luận ({post.comments?.length || 0})</h3>
+
+            {user ? (
+                <form onSubmit={handleCommentSubmit} style={{ marginBottom: 20 }}>
                     <textarea
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Thêm bình luận..."
-                        rows={2}
-                        cols={100} /><br />
-                    <button type="submit">Gửi Bình Luận</button>
-                </form></>
-            }
-            <ul>
-                {post.comments && post.comments.length > 0 ? (
-                    post.comments.map((comment) => (
-                        <li key={comment.id}>
-                            <p style={{ whiteSpace: 'pre-wrap' }}>
-                                {comment.text}
-                            </p>
-                            <p>Thời gian: <small>{new Date(comment.timestamp).toLocaleString()}</small></p>
-                        </li>
-                    ))
-                ) : (
-                    <li>Không có bình luận nào.</li>
-                )}
+                        placeholder="Viết bình luận của bạn..."
+                        rows={3}
+                        style={{ width: '100%', padding: 10 }}
+                    />
+                    <button type="submit" style={{ marginTop: 5, padding: '5px 15px' }}>Gửi</button>
+                </form>
+            ) : (
+                <p><em>Vui lòng đăng nhập để bình luận.</em></p>
+            )}
+
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+                {post.comments?.map((c) => (
+                    <li key={c.id} style={{ padding: 10, marginBottom: 10, borderRadius: 5 }}>
+                        <p style={{ margin: '0 0 5px 0' }}>{c.text}</p>
+                        <small>{new Date(c.timestamp).toLocaleString()}</small>
+                    </li>
+                ))}
             </ul>
-        </div >
-
-
+        </div>
     );
 }

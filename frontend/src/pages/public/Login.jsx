@@ -17,6 +17,9 @@ export default function Login({ onLogin }) {
 
             if (response.ok) {
                 const data = await response.json();
+                if (data.token) {
+                    localStorage.setItem("accessToken", data.token);
+                }
                 onLogin(data.user);
                 navigate("/");
             }

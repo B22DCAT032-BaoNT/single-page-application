@@ -9,16 +9,18 @@ import {
     addCommentToPost,
     getCommentsOfPost,
 } from "../controllers/PostController.js";
+import { verifyToken } from "../middleware/authMiddleWare.js";
 
 const router = express.Router();
 
 router.get("/", getPosts);
 router.get("/:slug", getPostBySlug);
-router.post("/", addNewPost);
-router.put("/:slug", updatePost);
-router.delete("/:slug", deletePost);
-
-router.post("/:slug/comments", addCommentToPost);
 router.get("/:slug/comments", getCommentsOfPost);
+
+router.post("/", verifyToken, addNewPost);
+router.post("/:slug/comments", verifyToken, addCommentToPost);
+
+router.put("/:slug", verifyToken, updatePost);
+router.delete("/:slug", verifyToken, deletePost);
 
 export default router;
