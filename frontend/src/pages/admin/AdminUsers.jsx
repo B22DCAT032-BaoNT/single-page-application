@@ -60,7 +60,7 @@ export default function AdminUsers() {
     }
 
     const handleDelete = async (userId) => {
-        if (!window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) return;
+        if (!globalThis.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) return;
 
         try {
             const response = await fetch(`${API_BASE}/${userId}`, {
@@ -115,80 +115,90 @@ export default function AdminUsers() {
             }
             resetForm();
         } catch (error) {
-            console.error("Failed to submit user:", error);
+            console.error("Thất bại khi gửi dữ liệu người dùng:", error);
             setMessage(editingUser ? "Cập nhật người dùng thất bại" : "Tạo người dùng thất bại");
         }
     }
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>Quản Lý Người Dùng</h2>
+        <div className="page-container">
+            <div className="card">
+                <h2 className="mb-24">Quản Lý Người Dùng</h2>
 
-            {message && <div style={{ marginBottom: 10, color: "green" }}>{message}</div>}
+                {message && <div className="mb-16" style={{ padding: '12px', backgroundColor: 'var(--accent-success)', borderRadius: '8px', color: 'white' }}>{message}</div>}
 
-            <h3>{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng mới"}</h3>
-            <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-                <div>
-                    <label>Username: </label>
-                    <input type="text" name="username" value={form.username} onChange={handleChange} required disabled={!!editingUser} />
+                <h3 className="mb-16">{editingUser ? "Chỉnh sửa người dùng" : "Thêm người dùng mới"}</h3>
+                <form onSubmit={handleSubmit} className="mb-24">
+                    <div className="form-group">
+                        <label htmlFor="username" className="form-label">Username</label>
+                        <input id="username" type="text" name="username" className="form-input" value={form.username} onChange={handleChange} required disabled={!!editingUser} />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="gmail" className="form-label">Gmail</label>
+                        <input id="gmail" type="email" name="gmail" className="form-input" value={form.gmail} onChange={handleChange} required />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="password" className="form-label">Password {editingUser ? "(để trống nếu không đổi)" : ""}</label>
+                        <input
+                            id="password"
+                            type="password"
+                            name="password"
+                            className="form-input"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder={editingUser ? "Để trống nếu không đổi" : ""} />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="role" className="form-label">Role</label>
+                        <select id="role" name="role" className="form-input" value={form.role} onChange={handleChange}>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div className="action-buttons">
+                        <button type="submit">{editingUser ? "Cập Nhật Người Dùng" : "Tạo Người Dùng"}</button>
+                        {editingUser && <button type="button" onClick={resetForm} className="btn-secondary">Hủy</button>}
+                    </div>
+                </form>
+
+                <h3 className="mb-16">Danh Sách Người Dùng</h3>
+                <div className="admin-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Gmail</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map((user) => (
+                                <tr key={user._id}>
+                                    <td>{user.username}</td>
+                                    <td>{user.gmail}</td>
+                                    <td>{user.role}</td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button onClick={() => handleEditClick(user)} className="btn-secondary">Chỉnh Sửa</button>
+                                            <button onClick={() => handleDelete(user._id)} className="btn-danger">Xóa</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            {users.length === 0 && (
+                                <tr>
+                                    <td colSpan="4" style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Không có người dùng nào.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
-
-                <div>
-                    <label>Gmail: </label>
-                    <input type="email" name="gmail" value={form.gmail} onChange={handleChange} required />
-                </div>
-
-                <div>
-                    <label>Password: {editingUser ? "(để trống nếu không đổi)" : ""} </label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={form.password}
-                        onChange={handleChange}
-                        placeholder={editingUser ? "Để trống nếu không đổi" : ""} />
-                </div>
-
-                <div>
-                    <label>Role: </label>
-                    <select name="role" value={form.role} onChange={handleChange}>
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-
-                <button type="submit">{editingUser ? "Cập Nhật Người Dùng" : "Tạo Người Dùng"}</button>
-                {editingUser && <button type="button" onClick={resetForm} style={{ marginLeft: 10 }}>Hủy</button>}
-
-            </form>
-
-            <h3>Danh Sách Người Dùng</h3>
-            <table border="1" cellPadding="5" cellSpacing="0">
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Gmail</th>
-                        <th>Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user) => (
-                        <tr key={user._id}>
-                            <td>{user.username}</td>
-                            <td>{user.gmail}</td>
-                            <td>{user.role}</td>
-                            <td>
-                                <button onClick={() => handleEditClick(user)}>Chỉnh Sửa</button>
-                                <button onClick={() => handleDelete(user._id)} style={{ marginLeft: 10 }}>Xóa</button>
-                            </td>
-                        </tr>
-                    ))}
-                    {users.length === 0 && (
-                        <tr>
-                            <td colSpan="4">Không có người dùng nào.</td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+            </div>
         </div>
     );
 }

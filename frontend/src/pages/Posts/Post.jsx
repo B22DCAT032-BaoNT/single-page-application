@@ -26,6 +26,8 @@ export default function Post({ user }) {
         fetchData();
     }, [slug]);
 
+
+
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
         if (!newComment.trim()) return;
@@ -50,52 +52,57 @@ export default function Post({ user }) {
         }
     };
 
-    if (loading) return <div>Đang tải...</div>;
-    if (error || !post) return <div>Lỗi: {error}</div>;
+
+    if (loading) return <div className="loading-container">Đang tải...</div>;
+    if (error || !post) return <div className="error-container">Lỗi: {error}</div>;
 
     return (
-        <div style={{ padding: 20, maxWidth: '800px', margin: '0 auto' }}>
-            <h1 >{post.title}</h1>
+        <div className="page-container page-container--narrow">
+            <div className="post-card">
+                <div className="post-card__header">
+                    <h1 className="post-card__title">{post.title}</h1>
+                    <div className="post-card__meta">
+                        <span><strong>Tác giả:</strong> {post.author || "Ẩn danh"}</span>
+                        <span style={{ marginLeft: 10 }}>| <strong>Ngày đăng:</strong> {new Date(post.createdAt).toLocaleString()}</span>
+                        {post.updatedAt !== post.createdAt && (
+                            <span style={{ marginLeft: 10 }}>| <strong>Đã sửa:</strong> {new Date(post.updatedAt).toLocaleString()}</span>
+                        )}
+                    </div>
+                </div>
 
-            <div style={{ fontSize: '0.9rem', marginBottom: 20, borderBottom: '1px solid #eee', paddingBottom: 10 }}>
-                <span><strong>Tác giả:</strong> {post.author || "Ẩn danh"}</span>
-                <span style={{ marginLeft: 10 }}>| <strong>Ngày đăng:</strong> {new Date(post.createdAt).toLocaleString()}</span>
-                {post.updatedAt !== post.createdAt && (
-                    <span style={{ marginLeft: 10 }}>| <strong>Đã sửa:</strong> {new Date(post.updatedAt).toLocaleString()}</span>
-                )}
+                <div className="post-card__content">
+                    <p className="post-card__description">
+                        {post.description}
+                    </p>
+                </div>
             </div>
 
-            <p style={{ whiteSpace: "pre-wrap", lineHeight: 1.6, fontSize: '1.1rem' }}>
-                {post.description}
-            </p>
+            <div className="comment-section">
+                <h3 className="mb-16">Bình luận ({post.comments?.length || 0})</h3>
 
-            <hr style={{ margin: '30px 0' }} />
+                {user ? (
+                    <form onSubmit={handleCommentSubmit} className="comment-form">
+                        <textarea
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            placeholder="Viết bình luận của bạn..."
+                            rows={3}
+                        />
+                        <button type="submit" className="mt-16">Gửi</button>
+                    </form>
+                ) : (
+                    <p style={{ color: 'var(--text-secondary)' }}><em>Vui lòng đăng nhập để bình luận.</em></p>
+                )}
 
-            <h3>Bình luận ({post.comments?.length || 0})</h3>
-
-            {user ? (
-                <form onSubmit={handleCommentSubmit} style={{ marginBottom: 20 }}>
-                    <textarea
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Viết bình luận của bạn..."
-                        rows={3}
-                        style={{ width: '100%', padding: 10 }}
-                    />
-                    <button type="submit" style={{ marginTop: 5, padding: '5px 15px' }}>Gửi</button>
-                </form>
-            ) : (
-                <p><em>Vui lòng đăng nhập để bình luận.</em></p>
-            )}
-
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-                {post.comments?.map((c) => (
-                    <li key={c.id} style={{ padding: 10, marginBottom: 10, borderRadius: 5 }}>
-                        <p style={{ margin: '0 0 5px 0' }}>{c.text}</p>
-                        <small>{new Date(c.timestamp).toLocaleString()}</small>
-                    </li>
-                ))}
-            </ul>
+                <ul className="comment-list">
+                    {post.comments?.map((c) => (
+                        <li key={c.id} className="comment-item">
+                            <p className="comment-item__text">{c.text}</p>
+                            <small className="comment-item__meta">{new Date(c.timestamp).toLocaleString()}</small>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }

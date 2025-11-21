@@ -29,17 +29,38 @@ export default function Login({ onLogin }) {
     }
 
     return (
-        <div style={{ padding: 10 }}> <br />
-            <span>Username:</span><br />
-            <input type="text" onChange={(e) => setCreds({
-                ...creds, username:
-                    e.target.value
-            })} /><br />
-            <span>Password:</span><br />
-            <input type="password" onChange={(e) => setCreds({
-                ...creds, password:
-                    e.target.value
-            })} /><br />
-            <button onClick={handleLogin}>Login</button> </div>
+        <div className="page-container">
+            <div className="form-container">
+                <div className="form-card">
+                    <h2 className="text-center mb-24">Login</h2>
+
+                    <div className="form-group">
+                        <label className="form-label">Username</label>
+                        <input
+                            type="text"
+                            className="form-input"
+                            onChange={(e) => setCreds({
+                                ...creds,
+                                username: e.target.value
+                            })}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <input
+                            type="password"
+                            className="form-input"
+                            onChange={(e) => setCreds({
+                                ...creds,
+                                password: e.target.value
+                            })}
+                        />
+                    </div>
+
+                    <button onClick={handleLogin} className="form-button">Login</button>
+                </div>
+            </div>
+        </div>
     );
 }

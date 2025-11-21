@@ -19,27 +19,23 @@ export default function PostForm({
 
     return (
         <form onSubmit={handleSubmit(handleFormSubmit)}>
-            <div style={{ padding: 10 }}>
-                <span>Title:</span>
-                <br />
-                <input type="text" {...register("title", { required: true })} />
-                <br />
+            <div className="form-group">
+                <label className="form-label">Title</label>
+                <input type="text" className="form-input" {...register("title", { required: true })} />
                 {errors.title && (
-                    <span style={{ color: "red" }}>Yêu cầu nhập tiêu đề!</span>
+                    <span className="form-error">Yêu cầu nhập tiêu đề!</span>
                 )}
-                <br />
-
-                <span>Description:</span>
-                <br />
-                <textarea {...register("description", { required: true })} />
-                <br />
-                {errors.description && (
-                    <span style={{ color: "red" }}>Yêu cầu nhập mô tả!</span>
-                )}
-                <br />
-
-                <button type="submit">{submitLabel}</button>
             </div>
+
+            <div className="form-group">
+                <label className="form-label">Description</label>
+                <textarea className="form-input" style={{ minHeight: '100px' }} {...register("description", { required: true })} />
+                {errors.description && (
+                    <span className="form-error">Yêu cầu nhập mô tả!</span>
+                )}
+            </div>
+
+            <button type="submit" className="form-button">{submitLabel}</button>
         </form>
     );
 }

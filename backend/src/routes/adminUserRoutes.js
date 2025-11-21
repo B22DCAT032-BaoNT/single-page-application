@@ -2,7 +2,7 @@ import express from 'express';
 import {
     getAllUsers,
     createUserByAdmin,
-    updateuserByAdmin,
+    updateUserByAdmin,
     deleteUserByAdmin,
 } from '../controllers/adminUserController.js';
 
@@ -13,8 +13,9 @@ const router = express.Router();
 router.use(verifyAdmin);
 
 router.get('/', getAllUsers);
+
 router.post('/', createUserByAdmin);
-router.put('/:id', updateuserByAdmin);
+router.put('/:id', updateUserByAdmin);
 router.delete('/:id', deleteUserByAdmin);
 
 export default router;

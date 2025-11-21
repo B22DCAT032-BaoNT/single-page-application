@@ -27,20 +27,29 @@ export default function Register() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div style={{ padding: 10 }}><br />
-                <h2>Đăng Ký Tài Khoản Mới</h2>
+        <div className="page-container">
+            <div className="form-container">
+                <form onSubmit={handleSubmit(onSubmit)} className="form-card">
+                    <h2 className="text-center mb-24">Đăng Ký Tài Khoản Mới</h2>
 
-                <span>Gmail:</span><br />
-                <input type="email" {...register("gmail", { required: true })} /><br /><br />
+                    <div className="form-group">
+                        <label className="form-label">Gmail</label>
+                        <input type="email" className="form-input" {...register("gmail", { required: true })} />
+                    </div>
 
-                <span>Tên người dùng:</span><br />
-                <input type="text" {...register("username", { required: true })} /><br /><br />
+                    <div className="form-group">
+                        <label className="form-label">Tên người dùng</label>
+                        <input type="text" className="form-input" {...register("username", { required: true })} />
+                    </div>
 
-                <span>Mật khẩu:</span><br />
-                <input type="password" {...register("password", { required: true })} /><br /><br />
-                <button type="submit">Đăng Ký</button>
+                    <div className="form-group">
+                        <label className="form-label">Mật khẩu</label>
+                        <input type="password" className="form-input" {...register("password", { required: true })} />
+                    </div>
+
+                    <button type="submit" className="form-button">Đăng Ký</button>
+                </form>
             </div>
-        </form>
+        </div>
     );
 }

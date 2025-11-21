@@ -78,85 +78,86 @@ export default function Profile({ user }) {
     };
 
     return (
-        <div style={{ padding: 20 }}>
+        <div className="page-container">
             {/* Phần thông tin User */}
-            <div style={{ padding: 15, borderRadius: 8, marginBottom: 20 }}>
-                <h2>Hồ sơ: {user?.username}</h2>
-                <p>Gmail: {user?.gmail}</p>
+            <div className="profile-header">
+                <h2 className="profile-header__username">Hồ sơ: {user?.username}</h2>
+                <p className="profile-header__email">Gmail: {user?.gmail}</p>
             </div>
 
-            <div style={{ marginBottom: 30 }}>
+            <div className="mb-24">
                 {!isCreating ? (
                     <button
                         onClick={() => setIsCreating(true)}
-                        style={{ background: 'green', color: 'white', padding: '10px 20px', border: 'none', cursor: 'pointer' }}
+                        className="btn-success"
                     >
                         + Viết bài mới
                     </button>
                 ) : (
-                    <div style={{ border: '1px solid green', padding: 15, borderRadius: 5 }}>
-                        <h3>Tạo bài viết mới</h3>
+                    <div className="card">
+                        <h3 className="mb-16">Tạo bài viết mới</h3>
                         <PostForm onSubmit={handleCreatePost} submitLabel="Đăng ngay" />
-                        <button onClick={() => setIsCreating(false)} style={{ marginTop: 10 }}>Hủy</button>
+                        <button onClick={() => setIsCreating(false)} className="btn-secondary mt-16">Hủy</button>
                     </div>
                 )}
             </div>
 
-            <hr />
-
-            <h3>Danh sách bài viết của bạn ({myPosts.length})</h3>
+            <h3 className="mb-16">Danh sách bài viết của bạn ({myPosts.length})</h3>
             <div>
                 {myPosts.map(post => (
-                    <div key={post._id} style={{ border: '1px solid #ddd', padding: 15, marginBottom: 15, borderRadius: 5 }}>
+                    <div key={post._id} className="post-card">
 
                         {editingSlug === post.slug ? (
-                            <div>
-                                <h4 style={{ color: 'orange' }}>Đang chỉnh sửa: {post.title}</h4>
+                            <div className="post-card__content">
+                                <h4 style={{ color: 'var(--accent-primary)', marginBottom: '16px' }}>Đang chỉnh sửa: {post.title}</h4>
                                 <PostForm
                                     initialValues={{ title: post.title, description: post.description }}
                                     onSubmit={(data) => handleUpdate(data, post.slug)}
                                     submitLabel="Lưu thay đổi"
                                 />
-                                <button onClick={() => setEditingSlug(null)} style={{ marginTop: 10 }}>Hủy bỏ</button>
+                                <button onClick={() => setEditingSlug(null)} className="btn-secondary mt-16">Hủy bỏ</button>
                             </div>
                         ) : (
                             <>
-                                <h3 style={{ marginTop: 0 }}>
-                                    <Link to={`/posts/${post.slug}`} style={{ textDecoration: 'none', color: 'blue' }}>
-                                        {post.title}
+                                <div className="post-card__header">
+                                    <Link to={`/posts/${post.slug}`}>
+                                        <h3 className="post-card__title">{post.title}</h3>
                                     </Link>
-                                </h3>
-                                <div style={{ fontSize: '0.85rem', marginBottom: 10 }}>
-                                    <span>Ngày đăng: {new Date(post.createdAt).toLocaleString()}</span>
-                                    {post.updatedAt !== post.createdAt &&
-                                        <span style={{ marginLeft: 10 }}>(Đã sửa: {new Date(post.updatedAt).toLocaleString()})</span>
-                                    }
+                                    <div className="post-card__meta">
+                                        <span>Ngày đăng: {new Date(post.createdAt).toLocaleString()}</span>
+                                        {post.updatedAt !== post.createdAt &&
+                                            <span style={{ marginLeft: 10 }}>(Đã sửa: {new Date(post.updatedAt).toLocaleString()})</span>
+                                        }
+                                    </div>
                                 </div>
 
-                                <p style={{ whiteSpace: 'pre-wrap', maxHeight: '100px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {post.description}
-                                </p>
-                                <details style={{ marginBottom: 15, padding: 5 }}>
-                                    <summary style={{ cursor: 'pointer' }}>Xem bình luận ({post.comments.length})</summary>
-                                    <ul style={{ paddingLeft: 20, marginTop: 5 }}>
-                                        {post.comments.map(c => (
-                                            <li key={c.id} style={{ fontSize: '0.9rem' }}>
-                                                <strong>Ẩn danh</strong>: {c.text} <span style={{ color: '#888', fontSize: '0.7rem' }}>({new Date(c.timestamp).toLocaleString()})</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </details>
+                                <div className="post-card__content">
+                                    <p className="post-card__description" style={{ maxHeight: '100px', overflow: 'hidden' }}>
+                                        {post.description}
+                                    </p>
+                                    <details style={{ marginTop: 15, padding: 8 }}>
+                                        <summary style={{ cursor: 'pointer', color: 'var(--text-secondary)' }}>Xem bình luận ({post.comments.length})</summary>
+                                        <ul className="comment-list" style={{ marginTop: 10 }}>
+                                            {post.comments.map(c => (
+                                                <li key={c.id} className="comment-item">
+                                                    <p className="comment-item__text">{c.text}</p>
+                                                    <small className="comment-item__meta">{new Date(c.timestamp).toLocaleString()}</small>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </details>
+                                </div>
 
-                                <div>
+                                <div className="post-card__footer action-buttons">
                                     <button
                                         onClick={() => setEditingSlug(post.slug)}
-                                        style={{ marginRight: 10, padding: '5px 10px', cursor: 'pointer' }}
+                                        className="btn-secondary"
                                     >
                                         Sửa bài
                                     </button>
                                     <button
                                         onClick={() => handleDelete(post.slug)}
-                                        style={{ background: 'red', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
+                                        className="btn-danger"
                                     >
                                         Xóa bài
                                     </button>
@@ -165,7 +166,7 @@ export default function Profile({ user }) {
                         )}
                     </div>
                 ))}
-                {myPosts.length === 0 && <p>Bạn chưa viết bài nào cả.</p>}
+                {myPosts.length === 0 && <p style={{ color: 'var(--text-secondary)' }}>Bạn chưa viết bài nào cả.</p>}
             </div>
         </div>
     );

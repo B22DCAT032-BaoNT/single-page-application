@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
-
+// GET /api/admin/users
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find({}, '-password');
@@ -10,7 +10,7 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ message: "Lỗi server khi lấy danh sách người dùng" });
     }
 }
-
+// POST /api/admin/users
 export const createUserByAdmin = async (req, res) => {
     try {
         const { username, password, gmail, role = 'user' } = req.body;
@@ -50,8 +50,8 @@ export const createUserByAdmin = async (req, res) => {
         res.status(500).json({ message: "Lỗi server khi tạo người dùng" });
     }
 }
-
-export const updateuserByAdmin = async (req, res) => {
+// PUT /api/admin/users/:id
+export const updateUserByAdmin = async (req, res) => {
     try {
         const { id } = req.params;
         const { password, gmail, role } = req.body;
@@ -78,7 +78,7 @@ export const updateuserByAdmin = async (req, res) => {
         res.status(500).json({ message: "Lỗi server khi cập nhật người dùng" });
     }
 }
-
+// DELETE /api/admin/users/:id
 export const deleteUserByAdmin = async (req, res) => {
     try {
         const { id } = req.params;

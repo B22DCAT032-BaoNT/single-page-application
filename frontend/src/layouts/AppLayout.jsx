@@ -26,56 +26,62 @@ export default function AppLayout() {
     }
     return (
         <>
-            <nav style={{ margin: 10 }}>
-                <Link to="/" style={{ padding: 5 }}> Home </Link>
-                <Link to="/posts" style={{ padding: 5 }}> Posts </Link>
-                <Link to="/about" style={{ padding: 5 }}> About </Link>
-                <Link to="/countries" style={{ padding: 5 }}> Countries </Link>
+            <nav className="app-nav">
+                <div className="app-nav__container">
+                    <div className="app-nav__links">
+                        <Link to="/" className="app-nav__link">Home</Link>
+                        <Link to="/posts" className="app-nav__link">Posts</Link>
+                        <Link to="/about" className="app-nav__link">About</Link>
+                        <Link to="/countries" className="app-nav__link">Countries</Link>
+                    </div>
 
-                <span> | </span>
-                {user?.role === "admin" && (
-                    <Link to="/admin" style={{ padding: 5 }}>Admin Panel</Link>
-                )}
-                {user && <Link to="/profile" style={{ padding: 5 }}> My profile</Link>}
-                {user && <Link to="/stats" style={{ padding: 5 }}> Stats </Link>}
-                {!user && <Link to="/auth/login" style={{ padding: 5 }}> Login </Link>}
-                {!user && <Link to="/auth/register" style={{ padding: 5 }}> Register </Link>}
-                {user && <button type="button" onClick={logOut} style={{
-                    background: 'none', border: 'none', padding: 5, cursor: 'pointer', color: 'blue'
-                }}>
-                    Logout
-                </button>}
+                    <div className="app-nav__links">
+                        {user?.role === "admin" && (
+                            <Link to="/admin" className="app-nav__link">Admin</Link>
+                        )}
+                        {user && <Link to="/profile" className="app-nav__link">Profile</Link>}
+                        {user && <Link to="/stats" className="app-nav__link">Stats</Link>}
+                        {!user && <Link to="/auth/login" className="app-nav__link">Login</Link>}
+                        {!user && <Link to="/auth/register" className="app-nav__link">Register</Link>}
+                        {user && (
+                            <button type="button" onClick={logOut} className="app-nav__button">
+                                Logout
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </nav>
 
-            </nav >
+            <div className="app-content">
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/countries" element={<Countries />} />
 
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/countries" element={<Countries />} />
+                    <Route path="/posts" element={<Posts />}>
+                        <Route index element={<PostLists user={user} />} />
+                        <Route path=":slug" element={<Post user={user} />} />
+                    </Route>
 
-                <Route path="/posts" element={<Posts />}>
-                    <Route index element={<PostLists />} />
-                    <Route path=":slug" element={<Post user={user} />} />
-                </Route>
+                    <Route path="/auth/login" element={<Login onLogin={setUser} />} />
+                    <Route path="/auth/register" element={<Register />} />
 
-                <Route path="/auth/login" element={<Login onLogin={setUser} />} />
-                <Route path="/auth/register" element={<Register />} />
+                    <Route path="/profile" element={<ProtectedRoute user={user}><Profile user={user} /></ProtectedRoute>} />
+                    <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />
+                    <Route path="*" element={<NoMatch />} />
 
-                <Route path="/profile" element={<ProtectedRoute user={user}><Profile user={user} /></ProtectedRoute>} />
-                <Route path="/stats" element={<ProtectedRoute user={user}><Stats /></ProtectedRoute>} />
-                <Route path="*" element={<NoMatch />} />
+                    <Route path="/admin"
+                        element={
+                            <AdminProtectedRoute user={user}>
+                                <AdminDashboard />
+                            </AdminProtectedRoute>
+                        }
+                    >
+                        <Route path="users" element={<AdminUsers />} />
+                    </Route>
 
-                <Route path="/admin"
-                    element={
-                        <AdminProtectedRoute user={user}>
-                            <AdminDashboard />
-                        </AdminProtectedRoute>
-                    }
-                >
-                    <Route path="users" element={<AdminUsers />} />
-                </Route>
-
-            </Routes>
+                </Routes>
+            </div>
         </>
     );
 }

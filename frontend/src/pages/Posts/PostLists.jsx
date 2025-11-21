@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function PostLists() {
+export default function PostLists({ user }) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -38,33 +38,60 @@ export default function PostLists() {
         };
 
         fetchData();
-    }, [debouncedSearchTerm]);
+    }, [debouncedSearchTerm, data.length]);
+
+    const handleDelete = async (slug) => {
+        if (!globalThis.confirm("Bạn chắc chắn muốn xóa bài này?")) return;
+        const token = localStorage.getItem("accessToken");
+        try {
+            await fetch(`http://localhost:8080/api/posts/${slug}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (response.ok) {
+                alert("Xóa bài thành công!");
+                fetchMyPosts();
+            }
+        } catch (error) { console.error(error); }
+    };
 
     if (loading) {
-        return <div>Đang tải bài viết...</div>;
+        return <div className="loading-container">Đang tải bài viết...</div>;
     }
 
     if (error) {
-        return <div>{error}</div>;
+        return <div className="error-container">{error}</div>;
     }
 
     return (
-        <div>
-            <h2>Tìm Kiếm</h2>
-            <input
-                type="text"
-                placeholder="Tìm kiếm bài viết..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} />
-            <ul>
-                {data.map((d) => (
-                    <li key={d.slug}>
+        <div className="page-container">
+            <div className="search-box mb-24">
+                <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Tìm kiếm bài viết..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+
+            {data.map((d) => (
+                <div key={d.slug} className="post-card">
+                    <div className="post-card__header">
                         <Link to={`/posts/${d.slug}`}>
-                            <h3>{d.title}</h3>
+                            <h3 className="post-card__title">{d.title}</h3>
                         </Link>
-                    </li>
-                ))}
-            </ul>
+                        <div className="post-card__meta">
+                            Tác giả: {d.author}
+                        </div>
+                    </div>
+                    {user && (user.role === "admin" || user.username === d.author) && (
+                        <div className="post-card__footer">
+                            <button onClick={() => handleDelete(d.slug)} className="btn-danger">Xóa</button>
+                        </div>
+                    )}
+                </div>
+            ))}
         </div>
     );
 }

@@ -56,7 +56,6 @@ export const addNewPost = async (req, res) => {
         let uniqueSlug = baseSlug;
         let count = 1;
 
-
         while (true) {
             const exists = await Post.exists({ slug: uniqueSlug });
             if (!exists) break;

@@ -23,12 +23,15 @@ export default function Stats() {
     }, []);
 
     if (loading) {
-        return <p>Đang đếm bài viết...</p>;
+        return <div className="loading-container">Đang đếm bài viết...</div>;
     }
 
     return (
-        <div>
-            <p>Tổng số bài viết: {postCount}</p>
+        <div className="page-container">
+            <div className="card text-center">
+                <h2 className="mb-16">Thống Kê</h2>
+                <p style={{ fontSize: '18px' }}>Tổng số bài viết: <strong>{postCount}</strong></p>
+            </div>
         </div>
     );
 }
