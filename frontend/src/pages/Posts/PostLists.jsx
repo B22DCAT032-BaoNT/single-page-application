@@ -44,14 +44,15 @@ export default function PostLists({ user }) {
         if (!globalThis.confirm("Bạn chắc chắn muốn xóa bài này?")) return;
         const token = localStorage.getItem("accessToken");
         try {
-            await fetch(`http://localhost:8080/api/posts/${slug}`, {
+            const response = await fetch(`http://localhost:8080/api/posts/${slug}`, {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` }
             });
             if (response.ok) {
+                setData(prevData => prevData.filter(post => post.slug !== slug));
                 alert("Xóa bài thành công!");
-                fetchMyPosts();
             }
+
         } catch (error) { console.error(error); }
     };
 
