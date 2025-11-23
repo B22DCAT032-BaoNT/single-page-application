@@ -1,4 +1,3 @@
-// src/routes/postRoutes.js
 import express from "express";
 import {
     getPosts,
@@ -8,7 +7,7 @@ import {
     updatePost,
     addCommentToPost,
     getCommentsOfPost,
-} from "../controllers/PostController.js";
+} from "../controllers/postController.js";
 import { verifyToken } from "../middleware/authMiddleWare.js";
 
 const router = express.Router();
